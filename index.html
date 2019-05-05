@@ -1,0 +1,49 @@
+---
+last_30: []
+---
+{%- for i in site.data.stats -%}
+{%- assign last_30 = last_30 | concat: i[1] -%}
+{%- endfor -%}
+{%- assign last_30 = last_30 | sort: 'timestamp' | reverse | slice: 0, 30 | reverse -%}
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <title>Statistics of MoKee installations on Smartisan devices</title>
+    <script src="https://gw.alipayobjects.com/os/lib/antv/g2/3.4.10/dist/g2.min.js"></script>
+  </head>
+  <body>
+    <div id="c1" />
+  </body>
+</html>
+
+<script>
+const source = {{ last_30 | jsonify }};
+const devices = {{ site.data.devices | jsonify }};
+
+const chart = new G2.Chart({
+  container: 'c1',
+  forceFit: true,
+});
+
+const data = [];
+for (const record of source) {
+  for (const name of devices) {
+    data.push({ timestamp: record.timestamp, device: name, value: record[name] });
+  }
+}
+
+chart.source(data, {
+  timestamp: {
+    formatter: function formatter(text) {
+      const date = new Date(text * 1000);
+      return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+    }
+  }
+});
+
+for (const name of devices) {
+  chart.line().position(`timestamp*value`).color('device');
+}
+
+chart.render();
+</script>
