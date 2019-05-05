@@ -10,6 +10,7 @@ last_30: []
   <head>
     <title>Statistics of MoKee installations on Smartisan devices</title>
     <script src="https://gw.alipayobjects.com/os/lib/antv/g2/3.4.10/dist/g2.min.js"></script>
+    <script src="moment.min.js"></script>
   </head>
   <body>
     <p>数据来源：<a href="https://stats.mokeedev.com">stats.mokeedev.com</a>，每24小时更新。</p>
@@ -36,8 +37,8 @@ for (const record of source) {
 chart.source(data, {
   timestamp: {
     formatter: function formatter(text) {
-      const date = new Date(text * 1000);
-      return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+      const date = moment(text * 1000);
+      return date.format('YYYY-MM-DD HH:mm');
     }
   }
 });
