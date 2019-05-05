@@ -37,7 +37,7 @@ for (const record of source) {
 chart.source(data, {
   timestamp: {
     formatter: function formatter(text) {
-      const date = moment(text * 1000);
+      const date = moment(text * 1000).utcOffset(8);
       return date.format('YYYY-MM-DD HH:mm');
     }
   }

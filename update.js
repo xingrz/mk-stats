@@ -7,7 +7,7 @@ const moment = require('moment');
 
 const devices = parse(readFileSync(join(__dirname, '_data/devices.yml'), 'utf8'));
 
-const now = moment();
+const now = moment().utcOffset(8);
 const base = now.format('YYYYMM');
 const yaml = join(__dirname, `_data/stats/${base}.yml`);
 
@@ -33,7 +33,7 @@ function parseDoc($) {
   });
 
   const last = records.pop();
-  if (last && moment(last.timestamp * 1000).date() != now.date()) {
+  if (last && moment(last.timestamp * 1000).utcOffset(8).date() != now.date()) {
     records.push(last);
   }
 
