@@ -1,1 +1,10 @@
-exclude: [ ".gitignore", "README.md", "CNAME" ]
+exclude:
+  - .gitignore
+  - README.md
+  - CNAME
+  - node_modules/*
+  - update.js
+  - Gemfile
+  - Gemfile.lock
+  - package.json
+  - package-lock.json

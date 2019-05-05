@@ -1,0 +1,26 @@
+{
+  "name": "mk-stats",
+  "version": "1.0.0",
+  "private": true,
+  "main": "update.js",
+  "scripts": {
+    "test": "mkdir -p _data/stats && node update.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xingrz/mk-stats.git"
+  },
+  "author": "XiNGRZ <chenxingyu92@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xingrz/mk-stats/issues"
+  },
+  "homepage": "https://github.com/xingrz/mk-stats#readme",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "moment": "^2.24.0",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4",
+    "yaml": "^1.5.0"
+  }
+}
