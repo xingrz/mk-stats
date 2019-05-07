@@ -6,6 +6,7 @@ const cheerio = require('cheerio');
 const moment = require('moment');
 
 const devices = parse(readFileSync(join(__dirname, '_data/devices.yml'), 'utf8'));
+const names = parse(readFileSync(join(__dirname, '_data/device_names.yml'), 'utf8'));
 
 const now = moment().utcOffset(8);
 const base = now.format('YYYYMM');
@@ -51,4 +52,25 @@ function parseDoc($) {
   lines.push('');
 
   writeFileSync(yaml, lines.join('\n'));
+
+  const message = [];
+  message.push(`*安装量统计*`);
+  message.push('');
+  for (const d of devices) {
+    if (typeof current[d] != 'undefined') {
+      message.push(`${names[d]} …… *${current[d]}*`);
+    }
+  }
+  message.push('');
+  message.push('[查看详情](https://stats.xingrz.me/)');
+  message.push('');
+  message.push('#stats');
+
+  rp.post(`https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendMessage`, {
+    json: {
+      chat_id: '@smartisandev',
+      text: message.join('\n'),
+      parse_mode: 'Markdown',
+    }
+  });
 }
