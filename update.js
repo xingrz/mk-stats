@@ -69,6 +69,8 @@ function parseDoc($) {
   message.push('');
   message.push('#stats');
 
+  console.log(message.join('\n'));
+
   if (BOT_TOKEN) {
     rp.post(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
       json: {
