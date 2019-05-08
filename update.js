@@ -14,7 +14,7 @@ const yaml = join(__dirname, `_data/stats/${base}.yml`);
 
 const { BOT_TOKEN } = process.env;
 
-let records = existsSync(yaml) && parse(readFileSync(yaml, 'utf8')) || [];
+const records = existsSync(yaml) && parse(readFileSync(yaml, 'utf8')) || [];
 
 rp.get('https://stats.mokeedev.com')
   .then(html => cheerio.load(html))
@@ -35,11 +35,12 @@ function parseDoc($) {
     current[name] = parseInt(td1.text().replace(/,/g,''));
   });
 
-  const last = records.pop();
+  let last = tail(records);
   if (last) {
     const timeOfLast = moment(last.timestamp * 1000).utcOffset(8);
-    if (!timeOfLast.isSame(now, 'day')) {
-      records.push(last);
+    if (timeOfLast.isSame(now, 'day')) {
+      records.pop();
+      last = tail(records);
     }
   }
 
@@ -63,7 +64,13 @@ function parseDoc($) {
   message.push('');
   for (const d of devices) {
     if (typeof current[d] != 'undefined') {
-      message.push(`${names[d]} …… *${current[d]}*`);
+      if (last && last[d] < current[d]) {
+        message.push(`${names[d]} …… *${current[d]}* (+${current[d] - last[d]})`);
+      } else if (last && last[d] > current[d]) {
+        message.push(`${names[d]} …… *${current[d]}* (-${last[d] - current[d]})`);
+      } else {
+        message.push(`${names[d]} …… *${current[d]}*`);
+      }
     }
   }
   message.push('');
@@ -82,5 +89,13 @@ function parseDoc($) {
         parse_mode: 'Markdown',
       }
     });
+  }
+}
+
+function tail(array) {
+  if (array.length > 0) {
+    return array[array.length - 1];
+  } else {
+    return null;
   }
 }
