@@ -36,8 +36,11 @@ function parseDoc($) {
   });
 
   const last = records.pop();
-  if (last && moment(last.timestamp * 1000).utcOffset(8).date() != now.date()) {
-    records.push(last);
+  if (last) {
+    const timeOfLast = moment(last.timestamp * 1000).utcOffset(8);
+    if (!timeOfLast.isSame(now, 'day')) {
+      records.push(last);
+    }
   }
 
   records.push(current);
