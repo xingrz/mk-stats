@@ -62,6 +62,7 @@ function parseDoc($) {
     }
   }
   message.push('');
+  message.push(`${now.format('YYYY/MM/DD HH:mm')}`);
   message.push('[查看详情](https://stats.xingrz.me/)');
   message.push('');
   message.push('#stats');
