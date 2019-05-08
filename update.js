@@ -12,6 +12,8 @@ const now = moment().utcOffset(8);
 const base = now.format('YYYYMM');
 const yaml = join(__dirname, `_data/stats/${base}.yml`);
 
+const { BOT_TOKEN } = process.env;
+
 let records = existsSync(yaml) && parse(readFileSync(yaml, 'utf8')) || [];
 
 rp.get('https://stats.mokeedev.com')
@@ -67,11 +69,13 @@ function parseDoc($) {
   message.push('');
   message.push('#stats');
 
-  rp.post(`https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendMessage`, {
-    json: {
-      chat_id: '@smartisandev',
-      text: message.join('\n'),
-      parse_mode: 'Markdown',
-    }
-  });
+  if (BOT_TOKEN) {
+    rp.post(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      json: {
+        chat_id: '@smartisandev',
+        text: message.join('\n'),
+        parse_mode: 'Markdown',
+      }
+    });
+  }
 }
