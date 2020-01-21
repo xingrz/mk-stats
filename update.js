@@ -5,8 +5,14 @@ const rp = require('request-promise');
 const cheerio = require('cheerio');
 const moment = require('moment');
 
-const devices = parse(readFileSync(join(__dirname, '_data/devices.yml'), 'utf8'));
+const smartisan = parse(readFileSync(join(__dirname, '_data/smartisan.yml'), 'utf8'));
+const meizu = parse(readFileSync(join(__dirname, '_data/meizu.yml'), 'utf8'));
 const names = parse(readFileSync(join(__dirname, '_data/device_names.yml'), 'utf8'));
+
+const devices = [
+  ...smartisan,
+  ...meizu,
+];
 
 const now = moment().utcOffset(8);
 const base = now.format('YYYYMM');
@@ -20,7 +26,7 @@ rp.get('https://stats.mokeedev.com')
   .then(html => cheerio.load(html))
   .then(parseDoc);
 
-function parseDoc($) {
+async function parseDoc($) {
   const current = { timestamp: now.unix() };
 
   $('tr').each((i, tr) => {
@@ -59,6 +65,23 @@ function parseDoc($) {
 
   writeFileSync(yaml, lines.join('\n'));
 
+  await publish(smartisan, last, current, '@smartisandev');
+
+  console.log('');
+  console.log('');
+
+  await publish(meizu, last, current, '@meizudev');
+}
+
+function tail(array) {
+  if (array.length > 0) {
+    return array[array.length - 1];
+  } else {
+    return null;
+  }
+}
+
+async function publish(devices, last, current, chat_id) {
   const message = [];
   message.push(`*安装量统计*`);
   message.push('');
@@ -82,20 +105,12 @@ function parseDoc($) {
   console.log(message.join('\n'));
 
   if (BOT_TOKEN) {
-    rp.post(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+    await rp.post(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
       json: {
-        chat_id: '@smartisandev',
+        chat_id,
         text: message.join('\n'),
         parse_mode: 'Markdown',
       }
     });
-  }
-}
-
-function tail(array) {
-  if (array.length > 0) {
-    return array[array.length - 1];
-  } else {
-    return null;
   }
 }
