@@ -20,7 +20,7 @@ last_30: []
 
 <script>
 const source = {{ last_30 | jsonify }};
-const devices = {{ site.data.devices | jsonify }};
+const devices = {{ site.data.smartisan | concat: site.data.meizu | jsonify }};
 
 const chart = new G2.Chart({
   container: 'c1',
