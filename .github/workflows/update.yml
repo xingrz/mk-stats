@@ -1,8 +1,8 @@
 name: Nightly update
 
 on:
-  push:
-    branches: [ github-actions ]
+  schedule:
+    - cron: "0 16 * * *"
 
 jobs:
   update:
@@ -31,7 +31,7 @@ jobs:
       - name: Publish
         uses: crazy-max/ghaction-github-pages@v2
         with:
-          target_branch: github-actions
+          target_branch: master
           keep_history: true
           allow_empty_commit: false
           build_dir: build
